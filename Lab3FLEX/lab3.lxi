@@ -1,0 +1,219 @@
+%{
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct{
+    int id1;
+    int id2;
+    }PIF;
+
+typedef struct{
+    char nume[10];
+}STiden;
+
+int pifLength=0;
+int constLength = 0;
+int identifLength = 0;
+int identifCode = 0;
+int constCode = 1;
+PIF program[300];
+
+STiden STidentif[30];
+
+float STconstants[30];
+
+/* id1 - the keywords( literal) table id
+* id2- the ST id for a constant/ identifier
+*/
+void addToPIF(int id1 , int id2){
+    program[pifLength].id1 = id1;
+    program[pifLength].id2 = id2;
+    pifLength++;
+}
+
+void addConstant(float atom){
+    int gasit = 0 ;
+    int i;
+	/* search for the atom in the ST
+	*  if it already exists, then add it only to the PIF
+	*  otherwise add it to the constantsST and also to the PIF
+	*/
+    for(i = 0;i<constLength;i++){
+        if (STconstants[i] == atom){
+            gasit =1;
+            addToPIF(constCode,i);
+        }
+    }
+    if (gasit == 0){
+        STconstants[constLength]=atom;
+        addToPIF(constCode,constLength);
+        constLength++;
+    }
+
+}
+
+void addIdentifier(char* atom){
+    int gasit = 0 ;
+     int i= 0;
+
+	/* search for the atom in the ST
+	*  if it already exists, then add it only to the PIF
+	*  otherwise add it to the identifiersST and also to the PIF
+	*/
+    while(i<identifLength){
+        int rez = strcmp(STidentif[i].nume,atom);
+        if(strcmp(STidentif[i].nume,atom)==0){
+            gasit =1;
+            addToPIF(identifCode,i);
+        }
+        i++;
+    }
+
+    if (gasit == 0){
+        strcpy(STidentif[identifLength].nume,atom);
+        addToPIF(identifCode,identifLength);
+        identifLength++;
+    }
+}
+
+void showPIF(){
+    printf("PIF\n");
+    int t;
+    for(t=0;t<pifLength;t++){
+		/* if the program token is from the keywords table, then only show its id from the table
+		*  otherwise, if it is a constant or an identifier, also show its ST id
+		*/
+        if(program[t].id1 != identifCode && program[t].id1 != constCode){
+          printf(" %d|- ",program[t].id1);
+        }
+        else{
+          printf(" %d|%d ",program[t].id1,program[t].id2);
+        }
+    }
+}
+
+void showConst(){
+    printf("Constants:\n");
+    int i;
+    for(i = 0 ;i<constLength;i++)
+        printf(" %f|%d", STconstants[i] , i);
+    printf("\n");
+}
+
+void showId(){
+    printf("Identifiers:\n");
+    int i;
+    for(i = 0 ;i<identifLength;i++)
+        printf(" %s|%d", STidentif[i].nume , i);
+    printf("\n");
+}
+
+void show(){
+    showConst();
+    showId();
+    showPIF();
+}
+
+%}
+
+/*
+* When the scanner receives an end-of-file, it checks the `yywrap()' function. 
+* yywrap returns true (<> 0) : the scanner terminates, returning 0 to its caller
+* yywrap returns false (= 0) : it is assumed that the function sets up yyin to point to another input file, and scanning continues
+* With noyywrap the scanner behaves as though `yywrap()' returned 1
+*/
+%option noyywrap
+/*Definitions
+* name definition( regular expression)
+*/
+DIGIT 		[0-9]
+NONZERODIGITS [1-9]
+ID      [a-zA-Z][a-zA-Z0-9]*
+
+/*Rules
+*rule/ pattern( regular expression) action( associated set of C actions)
+*
+* atoi() string-> int
+* atof() string-> double/ floating-point
+*/
+%% 
+{NONZERODIGITS}+                            addConstant(atoi( yytext )); 
+{NONZERODIGITS}{DIGIT}+						addConstant(atoi( yytext )); 
+{DIGIT}+"."{DIGIT}*				            addConstant(atof( yytext ));
+
+
+\identificator                          addToPIF(0,0);
+\constanta                              addToPIF(1,0);
+function                               addToPIF(2,0);
+const                                  addToPIF(3,0);
+var                                    addToPIF(4,0);
+begin                                  addToPIF(5,0);
+end                                    addToPIF(6,0);
+if                                     addToPIF(7,0);
+else                                     addToPIF(8,0);
+for                                     addToPIF(9,0);
+while                                      addToPIF(10,0);
+integer                                      addToPIF(11,0);
+real                                    addToPIF(12,0);
+array                                     addToPIF(13,0);
+of                                     addToPIF(14,0);
+read                                      addToPIF(15,0);
+write                                      addToPIF(16,0);
+call                                     addToPIF(17,0);
+\(                                     addToPIF(18,0);
+\)                              addToPIF(19,0);
+\{                                   addToPIF(20,0);
+\}                                    addToPIF(21,0);
+\,                                      addToPIF(22,0);
+\+                                      addToPIF(23,0);
+\-                                      addToPIF(24,0);
+\*                                      addToPIF(25,0);
+\/                                      addToPIF(26,0);
+\%                                    addToPIF(27,0);
+\>                                     addToPIF(28,0);
+\<                                addToPIF(29,0);
+\>=                                     addToPIF(30,0);
+\<=                                      addToPIF(31,0);
+\=                                     addToPIF(32,0);
+\!=                                     addToPIF(33,0);
+\==                                     addToPIF(34,0);
+\[                                    addToPIF(35,0);
+\]                                    addToPIF(36,0);
+\.                                   addToPIF(37,0);
+\:                                    addToPIF(38,0);
+\OR                                    addToPIF(39,0);
+\AND                                    addToPIF(40,0);
+;                                    addToPIF(41,0);
+{ID}                                    addIdentifier( yytext);
+
+[ \t\n]+             ;/* eat up whitespace */
+. {
+  if(yytext[0] != 13) {
+    printf("illegal token %s ASCII %d !",yytext,yytext[0]);
+  }
+}
+%%
+/*user subroutines section*/
+int main( argc, argv )
+int argc;
+char **argv;
+{
+    ++argv, --argc; /* skip over program name */
+	/* if there are file names given as arguments, then read from the file the input program 
+	*   else 
+	*   read from standard input
+	*/
+    if ( argc > 0 )
+    	yyin = fopen( argv[0], "r" );
+    else
+		yyin = stdin;
+		
+	/* yylex() scanning routine
+	*  Whenever `yylex()' is called, it scans tokens from the global input file yyin (which defaults to stdin). 
+	*  It continues until it either reaches an end-of-file (at which point it returns the value 0) or one of its actions executes a return statement.
+	*/
+    yylex();
+    show();
+	return 0;
+}

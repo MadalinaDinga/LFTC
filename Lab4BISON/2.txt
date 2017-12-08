@@ -1,0 +1,27 @@
+program gcd
+var a : integer
+var b : integer
+begin
+read ( a )
+read ( b )
+if a = 0
+begin
+a := a + b
+end
+if b = 0
+begin
+a := a + b
+end
+while a <> b
+begin
+if a > b
+begin
+a := a - b
+end
+else
+begin
+b := b - a
+end
+end
+write ( a )
+end

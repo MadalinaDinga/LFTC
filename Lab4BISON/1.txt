@@ -1,0 +1,15 @@
+program area
+var a : real
+var p : real
+var r : real
+const pi : real
+begin
+pi := 3.14
+read ( r )
+a := pi * r * r
+p := 2 * pi * r
+write ( a )
+write ( p )
+a := 4
+a := 25
+end

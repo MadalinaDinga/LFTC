@@ -1,0 +1,12 @@
+function sum
+var n : integer
+begin
+var suma : integer
+suma = 0
+var numar : integer
+for : var i = 1 , n , 1 {
+read ( numar )
+suma = suma + numar
+}
+write ( suma )
+end

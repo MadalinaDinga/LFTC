@@ -1,0 +1,5 @@
+Q=p,q,t,r,z
+A=1,2,3,4,5,6,7,8,9,.,0
+I=p
+F=z,q,t
+T=z-p,1;z-p,2;z-p,3;z-p,4;z-p,5;z-p,6;z-p,7;z-p,8;z-p,9;z-z,0;z-z,1;z-z,2;z-z,3;z-z,4;z-z,5;z-z,6;z-z,7;z-z,8;z-z,9;t-p,0;r-z,.;r-t,.;q-r,0;q-r,1;q-r,2;q-r,3;q-r,4;q-r,5;q-r,6;q-r,7;q-r,8;q-r,9;q-q,0;q-q,1;q-q,2;q-q,3;q-q,4;q-q,5;q-q,6;q-q,7;q-q,8;q-q,9
